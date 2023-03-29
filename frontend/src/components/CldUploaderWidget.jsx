@@ -23,7 +23,7 @@ const CloudinaryUploadWidget = (props) => {
 
 
     return (
-      <button className="cloudinary-button" onClick={(ev) => {
+      <button id="uploader" className="cloudinary-button" onClick={(ev) => {
         ev.preventDefault();
         myWidget.open();
       }}>
