@@ -11,6 +11,7 @@ import {
   UPDATE_FIELD_EDITOR,
 } from "../constants/actionTypes";
 import { withRouterParams } from "./commons";
+import CloudinaryUploadWidget from "./CldUploaderWidget";
 
 const mapStateToProps = (state) => ({
   ...state.editor,
@@ -34,7 +35,7 @@ class Editor extends React.Component {
       this.props.onUpdateField(key, ev.target.value);
     this.changeTitle = updateFieldEvent("title");
     this.changeDescription = updateFieldEvent("description");
-    this.changeImage = updateFieldEvent("image");
+    this.changeImage = (val) => this.props.onUpdateField("image", val);
     this.changeTagInput = updateFieldEvent("tagInput");
 
     this.watchForEnter = (ev) => {
@@ -117,15 +118,8 @@ class Editor extends React.Component {
                     ></textarea>
                   </fieldset>
 
-                  <fieldset className="form-group">
-                    <input
-                      className="form-control"
-                      type="text"
-                      placeholder="Image url"
-                      value={this.props.image}
-                      onChange={this.changeImage}
-                    />
-                  </fieldset>
+                  <CloudinaryUploadWidget onUpload={this.changeImage}/>
+                  <img id="uploadedimage" className="item-img" src={this.props.image}></img>
 
                   <fieldset className="form-group">
                     <input
