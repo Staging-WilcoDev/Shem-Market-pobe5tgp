@@ -10,7 +10,7 @@ import {
   EDITOR_PAGE_UNLOADED,
   UPDATE_FIELD_EDITOR,
 } from "../constants/actionTypes";
-import CloudinaryUploadWidget from "./CldUploaderWidget";
+import { withRouterParams } from "./commons";
 
 const mapStateToProps = (state) => ({
   ...state.editor,
@@ -34,7 +34,7 @@ class Editor extends React.Component {
       this.props.onUpdateField(key, ev.target.value);
     this.changeTitle = updateFieldEvent("title");
     this.changeDescription = updateFieldEvent("description");
-    this.changeImage = (val) => this.props.onUpdateField("image", val);
+    this.changeImage = updateFieldEvent("image");
     this.changeTagInput = updateFieldEvent("tagInput");
 
     this.watchForEnter = (ev) => {
@@ -66,19 +66,19 @@ class Editor extends React.Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.match.params.slug !== nextProps.match.params.slug) {
-      if (nextProps.match.params.slug) {
+  componentDidUpdate(prevProps) {
+    if (this.props.params.slug !== prevProps.params.slug) {
+      if (this.props.params.slug) {
         this.props.onUnload();
-        return this.props.onLoad(agent.Items.get(this.props.match.params.slug));
+        return this.props.onLoad(agent.Items.get(this.props.params.slug));
       }
       this.props.onLoad(null);
     }
   }
 
-  componentWillMount() {
-    if (this.props.match.params.slug) {
-      return this.props.onLoad(agent.Items.get(this.props.match.params.slug));
+  componentDidMount() {
+    if (this.props.params.slug) {
+      return this.props.onLoad(agent.Items.get(this.props.params.slug));
     }
     this.props.onLoad(null);
   }
@@ -117,8 +117,15 @@ class Editor extends React.Component {
                     ></textarea>
                   </fieldset>
 
-                  <CloudinaryUploadWidget onUpload={this.changeImage}/>
-                  <img id="uploadedimage" className="item-img" src={this.props.image}></img>
+                  <fieldset className="form-group">
+                    <input
+                      className="form-control"
+                      type="text"
+                      placeholder="Image url"
+                      value={this.props.image}
+                      onChange={this.changeImage}
+                    />
+                  </fieldset>
 
                   <fieldset className="form-group">
                     <input
@@ -166,4 +173,4 @@ class Editor extends React.Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Editor);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouterParams(Editor));
